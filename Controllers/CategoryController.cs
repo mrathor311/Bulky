@@ -7,6 +7,8 @@ namespace Bulky.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private object?[]? id;
+
         public CategoryController(ApplicationDbContext db)
         {
             _db = db;
@@ -44,7 +46,7 @@ namespace Bulky.Controllers
             {
                 return NotFound();
             }
-
+            
             Category? categoryFromDb = _db.Categories.Find(id);
            // Category? categoryFromDb1 = _db.Categories.FirstOrDefault(u=>u.Id==id);
            // Category? categoryFromDb2 = _db.Categories.Where(u => u.Id == id).FirstOrDefault();
@@ -71,6 +73,40 @@ namespace Bulky.Controllers
 
         }
 
+        public IActionResult Delete(int? id)
+        {
+            
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            Category? categoryFromDb = _db.Categories.Find(id);
+           
+            if (categoryFromDb == null)
+            {
+                
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePOST(int? id)
+
+        {
+            Category? category = _db.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            _db.Categories.Remove(category);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+
+           
+
+
+        }
 
     }
 }
